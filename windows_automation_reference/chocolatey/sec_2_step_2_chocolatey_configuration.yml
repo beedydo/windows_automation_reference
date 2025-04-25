@@ -1,0 +1,44 @@
+---
+# These new tasks will perform the following:
+
+# Create the directory C:\ChocoCache using the win_file module from the ansible.windows collection.
+# Modify the value of cacheLocation to the newly created directory using win_chocolatey_config from the chocolatey.chocolatey collection.
+# Modify the value of commandExecutionTimeoutSeconds to 3600.
+# Re gather the Chocolatey facts after modifying the configuration values.
+# And Finally print out the config section from the refreshed Chocolatey facts.
+
+- name: Chocolatey Facts and Configuration
+  hosts: all
+  gather_facts: false
+  tasks:
+
+  - name: Gather facts from Chocolatey
+    chocolatey.chocolatey.win_chocolatey_facts:
+
+  - name: Displays the gathered facts
+    ansible.builtin.debug:
+      var: ansible_chocolatey
+
+  - name: Create a directory for the new Chocolatey caching directory
+    ansible.windows.win_file:
+      path: C:\ChocoCache
+      state: directory
+
+  - name: Configure Chocolatey to use the new directory as the cache location
+    chocolatey.chocolatey.win_chocolatey_config:
+      name: cacheLocation
+      state: present
+      value: C:\ChocoCache
+
+  - name: Change the Execution Timeout Setting
+    chocolatey.chocolatey.win_chocolatey_config:
+      name: commandExecutionTimeoutSeconds
+      state: present
+      value: 3600
+
+  - name: ReGather facts from Chocolatey after new reconfiguring
+    chocolatey.chocolatey.win_chocolatey_facts:
+
+  - name: Displays the gathered facts
+    ansible.builtin.debug:
+      var: ansible_chocolatey.config

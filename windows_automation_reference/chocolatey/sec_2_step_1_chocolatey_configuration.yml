@@ -1,0 +1,16 @@
+---
+# This playbook gathers chocolatey facts and configs
+- name: Chocolatey Facts and Configuration
+  hosts: all
+  gather_facts: false
+  tasks:
+
+  # task uses win_chocolatey_facts from the chocolatey.chocolatey collection to gather all the available information from Chocolatey on the target Windows machine, 
+  # and will store this information in a variable named ansible_chocolatey, 
+  # which is using the debug module from the ansible.builtin collection to print the contents of to examine them closer.
+  - name: Gather facts from Chocolatey
+    chocolatey.chocolatey.win_chocolatey_facts:
+
+  - name: Displays the gathered facts
+    ansible.builtin.debug:
+      var: ansible_chocolatey
