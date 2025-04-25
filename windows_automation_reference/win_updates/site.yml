@@ -1,0 +1,15 @@
+---
+- name: This is my Windows patching playbook
+  hosts: windows
+  tasks:
+    
+    # win_updates module is used for checking or installing updates. 
+    # We tell it to only install updates from specific categories using a variable.
+    # reboot attribute will automatically reboot the remote host if it is required and continue to install updates after the reboot. 
+    # We will also use a survey variable to stop us from rebooting even if needed. If the reboot_server value is not specified we will set the reboot attribute to true.
+    - name: Install Windows Updates
+      ansible.windows.win_updates:
+        category_names: "{{ categories | default(omit) }}"
+        reboot: '{{ reboot_server | default(true) }}'
+  
+    

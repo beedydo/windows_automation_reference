@@ -73,7 +73,7 @@
   # Everything below that looks the same as any other task, i.e. you give it a name, a module, and the options for that module. This is the definition of a handler.
   # Refer back to the win_iis_website task where we called upon this handler. 
   handlers:
-    - name: restart iis service
+    - name: Restart iis service
       ansible.windows.win_service:
         name: W3Svc
         state: restarted
