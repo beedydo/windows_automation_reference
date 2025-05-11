@@ -1,0 +1,39 @@
+---
+- name: Generate hardware report
+  hosts: all
+  become: true
+  tasks:
+    - name: Fetch file from remote directory and save
+      ansible.builtin.get_url:
+        url: https://github.com/beedydo/rhce_practice/blob/main/hwreport.empty
+        dest: /home/beedy/ansible/hwreport.txt
+
+    - name: Fetch and replace inventory hostname
+      ansible.builtin.replace:
+        path: /home/beedy/ansible/hwreport.txt
+        regexp: "inventoryhostname"
+        replace: "{{ ansible_hostname }}"
+
+    - name: Fetch and replace total memory size
+      ansible.builtin.replace:
+        path: /home/beedy/ansible/hwreport.txt
+        regexp: "memory_in_MB"
+        replace: "{{ ansible_memtotal_mb | default('NONE') }}"
+
+    - name: Fetch and replace BIOS version
+      ansible.builtin.replace:
+        path: /home/beedy/ansible/hwreport.txt
+        regexp: "BIOS_version"
+        replace: "{{ ansible_bios_version | default('NONE') }}"
+
+    - name: Fetch and replace size of disk vda
+      ansible.builtin.replace:
+        path: /home/beedy/ansible/hwreport.txt
+        regexp: "disk_vda_size"
+        replace: "{{ ansible_devices.sda1.size | default('NONE') }}"
+
+    - name: Replace size of disk vdb
+      ansible.builtin.replace:
+        path: /home/beedy/ansible/hwreport.txt
+        regexp: "disk_vdb_size"
+        replace: "{{ ansible_devices.sda2.size | default('NONE') }}"

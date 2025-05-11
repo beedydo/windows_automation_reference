@@ -1,0 +1,44 @@
+---
+- name: Modify web content
+  hosts: all
+  become: true
+  tasks: 
+    - name: Create a directory
+      ansible.builtin.file:
+        path: /webdev
+        state: directory
+        mode: '2775'
+
+    - name: Create a symbolic link
+      ansible.builtin.file:
+        src: /webdev
+        dest: /var/www/html/webdev
+        state: link
+      
+    - name: Create file with text replaced
+      ansible.builtin.copy:
+        content: 'Development'
+        dest: /webdev/index.html
+
+    - name: Install httpd and firewalld packages
+      ansible.builtin.dnf:
+        name:
+          - httpd
+          - firewalld
+        state: latest
+
+    - name: Enable and reload httpd and firewalld services
+      ansible.builtin.service:
+        name: "{{ item }}"
+        enabled: yes
+        state: reloaded
+      loop:
+        - httpd
+        - firewalld
+
+    - name: Config firewall to allow HTTP traffic
+      ansible.posix.firewalld:
+        service: http
+        permanent: true
+        state: enabled
+

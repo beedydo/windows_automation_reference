@@ -1,0 +1,27 @@
+---
+- name: Install httpd package
+  ansible.builtin.dnf:
+    name: httpd
+    state: present
+  
+- name: EReload and enable httpd at startup
+  ansible.builtin.service:
+    name: httpd
+    state: reloaded
+
+- name: Configure and enable firewall
+  ansible.posix.firewalld:
+    service: http
+    state: enabled
+    permanent: true
+    immediate: true
+
+- name: Reload firewall service
+  ansible.builtin.service:
+    service: firewalld
+    state: reloaded
+
+- name: Reference a jinja template
+  ansible.builtin.service:
+    src: /home/beedy/ansible/roles/apache/templates/index.html.j2
+    dest: /var/www/html/index.html
